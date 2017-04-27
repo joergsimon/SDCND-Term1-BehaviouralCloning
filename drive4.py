@@ -1,8 +1,11 @@
 import csv
+import cv2
+import numpy as np
 from keras.models import Sequential, Model
 from keras.layers import Flatten, Dense, Lambda, Cropping2D
 
 DATA_PATH = './data/'
+IMG_DATA_PATH = DATA_PATH + 'IMG/'
 IDX_CENTER_IMG = 0
 IDX_LEFT_IMG = 1
 IDX_RIGHT_IMG = 2
@@ -13,7 +16,7 @@ STEER_CORRECTION_CONSTANT = 0.2
 def load_img(csv_line, idx):
     source_path = csv_line[idx]
     filename = source_path.split('/')[-1]
-    current_path = DATA_PATH + filename
+    current_path = IMG_DATA_PATH + filename
     image = cv2.imread(current_path)
     return image
 
@@ -26,6 +29,10 @@ with open(DATA_PATH+'driving_log.csv') as csvfile:
 images = []
 measurements = []
 for line in lines:
+    source_path = line[IDX_CENTER_IMG]
+    if source_path == "center":
+        continue
+    
     measurement = float(line[IDX_STEER_ANGLE])
     
     image = load_img(line, IDX_CENTER_IMG)
@@ -42,7 +49,7 @@ for line in lines:
     measurements.append(max(measurement - STEER_CORRECTION_CONSTANT, -1.0))
 
 augmented_images, augmented_measurements = [], []
-for image,measurement in zip(images, measurments):
+for image,measurement in zip(images, measurements):
     augmented_images.append(image)
     augmented_measurements.append(measurement)
     image_flipped = np.fliplr(image)
@@ -52,9 +59,8 @@ for image,measurement in zip(images, measurments):
 
 X_train = np.array(images)
 y_train = np.array(measurements)
-
-from keras.models import Sequential
-from keras.layers import Flatten, Dense
+print("x shape", X_train.shape)
+print("y shape", y_train.shape)
 
 model = Sequential()
 model.add(Lambda(lambda x: (x / 255.0) - 0.5, input_shape=(160,320,3)))

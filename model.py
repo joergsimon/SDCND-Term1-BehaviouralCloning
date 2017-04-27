@@ -15,19 +15,13 @@ import matplotlib.pyplot as plt
 import sys
 sys.setrecursionlimit(10000)
 
-model = Sequential()
-model.add(Lambda(lambda x: (x / 255.0) - 0.5, input_shape=(160,320,3)))
-model.add(Cropping2D(cropping=((75,25), (0,0))))
-model.add(Flatten())
-model.add(Dense(1))
-
 def nvidia_model():
     model = Sequential()
     model.add(Lambda(lambda x: (x / 255.0) - 0.5, input_shape=(160,320,3)))
     model.add(Cropping2D(cropping=((75,25), (0,0))))
-    model.add(Convolution2D(24, 5, 5))
-    model.add(Convolution2D(35, 5, 5))
-    model.add(Convolution2D(48, 5, 5))
+    model.add(Convolution2D(24, 5, 5, strides=(2,2)))
+    model.add(Convolution2D(35, 5, 5, strides=(2,2)))
+    model.add(Convolution2D(48, 5, 5, strides=(2,2)))
     model.add(Convolution2D(64, 3, 3))
     model.add(Convolution2D(64, 3, 3))
     model.add(Flatten())

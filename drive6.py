@@ -1,12 +1,17 @@
 import os
 import csv
 import sklearn
+import cv2
+import numpy as np
+import matplotlib
 from sklearn.model_selection import train_test_split
+from sklearn.utils import shuffle
 from keras.models import Sequential, Model
 from keras.layers import Flatten, Dense, Lambda, Cropping2D
 import matplotlib.pyplot as plt
 
 DATA_PATH = './data/'
+IMG_DATA_PATH = DATA_PATH + 'IMG/'
 IDX_CENTER_IMG = 0
 IDX_LEFT_IMG = 1
 IDX_RIGHT_IMG = 2
@@ -17,21 +22,23 @@ STEER_CORRECTION_CONSTANT = 0.2
 def load_img(csv_line, idx):
     source_path = csv_line[idx]
     filename = source_path.split('/')[-1]
-    current_path = DATA_PATH + filename
+    current_path = IMG_DATA_PATH + filename
     image = cv2.imread(current_path)
     return image
     
 def add_image_and_flipped(csv_line, idx, measurment, images, angles):
     image = load_img(line, IDX_CENTER_IMG)
     images.append(image)
-    angles.append(measurement)
+    angles.append(measurment)
     
     image_flipped = np.fliplr(image)
-    measurement_flipped = -measurement
+    measurement_flipped = -measurment
     images.append(image_flipped)
     angles.append(measurement_flipped)
 
 def process_line(csv_line, images, angles):
+    source_path = line[IDX_CENTER_IMG]
+    
     measurement = float(line[IDX_STEER_ANGLE])
     
     add_image_and_flipped(csv_line, IDX_CENTER_IMG, 
@@ -67,11 +74,14 @@ samples = []
 with open(DATA_PATH+'driving_log.csv') as csvfile:
     reader = csv.reader(csvfile)
     for line in reader:
+        source_path = line[IDX_CENTER_IMG]
+        if source_path == "center":
+            continue
         samples.append(line)
 
 train_samples, validation_samples = train_test_split(samples, test_size=0.2)
-train_generator = generator(train_samples, batch_size=32)
-validation_generator = generator(validation_samples, batch_size=32)
+train_generator = generator(train_samples, batch_size=18)
+validation_generator = generator(validation_samples, batch_size=18)
 
 ch, row, col = 3, 80, 320  # Trimmed image format
 
@@ -82,9 +92,7 @@ model.add(Flatten())
 model.add(Dense(1))
 
 model.compile(loss='mse', optimizer='adam')
-history_object = model.fit_generator(train_generator, samples_per_epoch= /
-            len(train_samples), validation_data=validation_generator, /
-            nb_val_samples=len(validation_samples), nb_epoch=3)
+history_object = model.fit_generator(train_generator, samples_per_epoch=len(train_samples), validation_data=validation_generator,nb_val_samples=len(validation_samples), nb_epoch=3)
             
 print(history_object.history.keys())
 
