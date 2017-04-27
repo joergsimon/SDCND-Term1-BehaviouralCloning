@@ -1,4 +1,5 @@
 import csv
+import cv2
 
 DATA_PATH = './data/'
 IDX_CENTER_IMG = 0
