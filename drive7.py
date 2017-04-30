@@ -7,7 +7,7 @@ import matplotlib
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 from keras.models import Sequential, Model
-from keras.layers import Flatten, Dense, Lambda, Cropping2D, Dropout, Activation
+from keras.layers import Flatten, Dense, Lambda, Cropping2D, Convolution2D, Dropout, Activation
 import matplotlib.pyplot as plt
 
 DATA_PATH = './data/'
