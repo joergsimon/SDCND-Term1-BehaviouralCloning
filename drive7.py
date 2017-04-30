@@ -17,6 +17,8 @@ IDX_LEFT_IMG = 1
 IDX_RIGHT_IMG = 2
 IDX_STEER_ANGLE = 4
 
+BATCH_SIZE = 32
+
 STEER_CORRECTION_CONSTANT = 0.2
 
 def load_img(csv_line, idx):
@@ -80,8 +82,8 @@ with open(DATA_PATH+'driving_log.csv') as csvfile:
         samples.append(line)
 
 train_samples, validation_samples = train_test_split(samples, test_size=0.2)
-train_generator = generator(train_samples, batch_size=18)
-validation_generator = generator(validation_samples, batch_size=18)
+train_generator = generator(train_samples, batch_size=BATCH_SIZE)
+validation_generator = generator(validation_samples, batch_size=BATCH_SIZE)
 
 ch, row, col = 3, 80, 320  # Trimmed image format
 
@@ -107,7 +109,7 @@ model.add(Dropout(0.7))
 model.add(Dense(1))
 model.summary()
 model.compile(loss='mse', optimizer='adam')
-history_object = model.fit_generator(train_generator, samples_per_epoch=len(train_samples), validation_data=validation_generator,nb_val_samples=len(validation_samples), nb_epoch=3)
+history_object = model.fit_generator(train_generator, steps_per_epoch=(len(train_samples)/BATCH_SIZE), validation_data=validation_generator,nb_val_samples=len(validation_samples), nb_epoch=7)
             
 print(history_object.history.keys())
 
