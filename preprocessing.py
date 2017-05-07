@@ -5,12 +5,12 @@ import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
 
-DATA_PATH = './data/'
+DATA_PATH = './data straight/'
 IMG_DATA_PATH = DATA_PATH + 'IMG/'
 IDX_CENTER_IMG = 0
 IDX_LEFT_IMG = 1
 IDX_RIGHT_IMG = 2
-IDX_STEER_ANGLE = 4
+IDX_STEER_ANGLE = 3
 
 STEER_CORRECTION_CONSTANT = 0.2
 
@@ -39,8 +39,8 @@ print("loading data x 3 per line...")
 images = []
 measurements = []
 for line in lines:
-    source_path = line[IDX_CENTER_IMG]
-    if source_path == "center":
+    test = line[IDX_STEER_ANGLE]
+    if test == "steering":
         continue
     
     measurement = float(line[IDX_STEER_ANGLE])

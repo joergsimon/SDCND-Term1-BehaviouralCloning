@@ -5,7 +5,7 @@ import numpy as np
 DATA_PATH = './data/'
 IMG_DATA_PATH = DATA_PATH + 'IMG/'
 IDX_CENTER_IMG = 0
-IDX_STEER_ANGLE = 4
+IDX_STEER_ANGLE = 3
 
 lines = []
 with open(DATA_PATH+'driving_log.csv') as csvfile:
