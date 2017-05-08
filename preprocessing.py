@@ -51,11 +51,11 @@ for line in lines:
     
     #image = load_img(line, IDX_LEFT_IMG)
     #images.append(image)
-    #measurements.append(min(measurement + STEER_CORRECTION_CONSTANT, 1.0))
+    measurements.append(min(measurement + STEER_CORRECTION_CONSTANT, 1.0))
     
     #image = load_img(line, IDX_RIGHT_IMG)
     #images.append(image)
-    #measurements.append(max(measurement - STEER_CORRECTION_CONSTANT, -1.0))
+    measurements.append(max(measurement - STEER_CORRECTION_CONSTANT, -1.0))
 
 print("augment...")
 augmented_images, augmented_measurements = [], []
@@ -74,3 +74,8 @@ print(np.histogram(y_train))
 
 y_pd = pd.Series(y_train)
 print(y_pd.describe())
+
+import matplotlib.pyplot as plt
+plt.hist(y_train, bins='auto')  # plt.hist passes it's arguments to np.histogram
+plt.title("Histogram with 'auto' bins")
+plt.show()
