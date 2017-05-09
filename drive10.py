@@ -133,4 +133,4 @@ print(history_object.history['val_loss'])
 #plt.legend(['training set', 'validation set'], loc='upper right')
 #plt.show()
 #
-model.save('model-dropout-3end.h5')
+model.save('model-d10.h5')
