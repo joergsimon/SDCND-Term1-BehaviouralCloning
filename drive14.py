@@ -17,8 +17,8 @@ IDX_LEFT_IMG = 1
 IDX_RIGHT_IMG = 2
 IDX_STEER_ANGLE = 3
 
-BATCH_SIZE = 32
-EPOCHS = 7
+BATCH_SIZE = 16
+EPOCHS = 3
 
 STEER_CORRECTION_CONSTANT = 0.2
 
@@ -47,11 +47,11 @@ def process_line(csv_line, images, angles):
     add_image_and_flipped(csv_line, IDX_CENTER_IMG, 
                             measurement, images, angles)
     
-    correct_to_right = max(measurement - STEER_CORRECTION_CONSTANT, -1.0)
+    correct_to_right = min(measurement + STEER_CORRECTION_CONSTANT, 1.0)
     add_image_and_flipped(csv_line, IDX_LEFT_IMG, 
                             correct_to_right, images, angles)
     
-    correct_to_left = min(measurement + STEER_CORRECTION_CONSTANT, 1.0)
+    correct_to_left = max(measurement - STEER_CORRECTION_CONSTANT, -1.0)
     add_image_and_flipped(csv_line, IDX_RIGHT_IMG, 
                             correct_to_left, images, angles)
     
@@ -94,26 +94,27 @@ model.add(Cropping2D(cropping=((75,25), (0,0))))
 model.add(Conv2D(24, (5, 5), strides=(2,2)))
 model.add(Activation('relu'))
 model.add(Conv2D(35, (5, 5), strides=(1,2)))
-model.add(Activation('relu'))
 model.add(BatchNormalization())
+model.add(Activation('relu'))
 model.add(Conv2D(48, (5, 5), strides=(2,2)))
-model.add(Activation('relu'))
 model.add(BatchNormalization())
+model.add(Activation('relu'))
 model.add(Conv2D(64, (3, 3), strides=(1,2)))
-model.add(Activation('relu'))
 model.add(BatchNormalization())
+model.add(Activation('relu'))
 model.add(Conv2D(80, (3, 3), strides=(1,2)))
-model.add(Activation('relu'))
 model.add(BatchNormalization())
+model.add(Activation('relu'))
 model.add(Dropout(0.25))
-model.add(Conv2D(64, (1, 1)))
+model.add(Conv2D(64, (3, 3)))
 model.add(Activation('relu'))
 model.add(BatchNormalization())
-model.add(Conv2D(32, (3, 3)))
+model.add(Conv2D(48, (3, 3)))
 model.add(Activation('relu'))
 model.add(BatchNormalization())
-model.add(Conv2D(24, (3, 3)))
+model.add(Conv2D(48, (2, 2)))
 model.add(Activation('relu'))
+model.add(BatchNormalization())
 model.add(Flatten())
 model.add(Dropout(0.5))
 model.add(Dense(10))
@@ -138,4 +139,4 @@ print(history_object.history['val_loss'])
 #plt.legend(['training set', 'validation set'], loc='upper right')
 #plt.show()
 #
-model.save('model-d13.h5')
+model.save('model-d14.h5')

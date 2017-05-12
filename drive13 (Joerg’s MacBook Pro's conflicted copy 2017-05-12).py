@@ -47,13 +47,13 @@ def process_line(csv_line, images, angles):
     add_image_and_flipped(csv_line, IDX_CENTER_IMG, 
                             measurement, images, angles)
     
-    correct_to_right = max(measurement - STEER_CORRECTION_CONSTANT, -1.0)
-    add_image_and_flipped(csv_line, IDX_LEFT_IMG, 
-                            correct_to_right, images, angles)
-    
-    correct_to_left = min(measurement + STEER_CORRECTION_CONSTANT, 1.0)
-    add_image_and_flipped(csv_line, IDX_RIGHT_IMG, 
-                            correct_to_left, images, angles)
+#    correct_to_right = min(measurement + STEER_CORRECTION_CONSTANT, 1.0)
+#    add_image_and_flipped(csv_line, IDX_LEFT_IMG, 
+#                            correct_to_right, images, angles)
+#    
+#    correct_to_left = max(measurement - STEER_CORRECTION_CONSTANT, -1.0)
+#    add_image_and_flipped(csv_line, IDX_RIGHT_IMG, 
+#                            correct_to_left, images, angles)
     
     
 def generator(samples, batch_size=32):
@@ -116,7 +116,7 @@ model.add(Conv2D(24, (3, 3)))
 model.add(Activation('relu'))
 model.add(Flatten())
 model.add(Dropout(0.5))
-model.add(Dense(10))
+model.add(Dense(3))
 model.add(Activation('elu'))
 model.add(Dense(1))
 model.add(Activation('linear'))

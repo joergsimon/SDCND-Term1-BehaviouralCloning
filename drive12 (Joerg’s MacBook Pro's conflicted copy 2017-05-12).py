@@ -17,7 +17,7 @@ IDX_LEFT_IMG = 1
 IDX_RIGHT_IMG = 2
 IDX_STEER_ANGLE = 3
 
-BATCH_SIZE = 32
+BATCH_SIZE = 16
 EPOCHS = 7
 
 STEER_CORRECTION_CONSTANT = 0.2
@@ -47,13 +47,13 @@ def process_line(csv_line, images, angles):
     add_image_and_flipped(csv_line, IDX_CENTER_IMG, 
                             measurement, images, angles)
     
-    correct_to_right = max(measurement - STEER_CORRECTION_CONSTANT, -1.0)
-    add_image_and_flipped(csv_line, IDX_LEFT_IMG, 
-                            correct_to_right, images, angles)
-    
-    correct_to_left = min(measurement + STEER_CORRECTION_CONSTANT, 1.0)
-    add_image_and_flipped(csv_line, IDX_RIGHT_IMG, 
-                            correct_to_left, images, angles)
+#    correct_to_right = min(measurement + STEER_CORRECTION_CONSTANT, 1.0)
+#    add_image_and_flipped(csv_line, IDX_LEFT_IMG, 
+#                            correct_to_right, images, angles)
+#    
+#    correct_to_left = max(measurement - STEER_CORRECTION_CONSTANT, -1.0)
+#    add_image_and_flipped(csv_line, IDX_RIGHT_IMG, 
+#                            correct_to_left, images, angles)
     
     
 def generator(samples, batch_size=32):
@@ -88,6 +88,26 @@ validation_generator = generator(validation_samples, batch_size=BATCH_SIZE)
 
 ch, row, col = 3, 80, 320  # Trimmed image format
 
+# model.add(BatchNormalization()) is not used in the first input layer
+# and before the output layer. The reson is somehow that for unsupervised
+# models this has empirically shown to be bad (see 
+# Unsupervised Representation Learning with Deep Convolutional Generative
+# Adversarial Networks; Rudford et al. 2016)
+# storing the model and calculating the difference with Norm. also at the
+# ends would be interesting...
+
+# also NVIDIA already does not use max pooling, but this is also
+# recommendet in the DCGAN (== Rudford et al. 2016) paper. Again this
+# paper is for something different, but the intution would be it also
+# helps here
+
+# ReLU activation is in a Nair & Hinton 2010 paper
+# Adam optimizer is in a Kingma & Ba 2014 paper
+
+# "recent studies have shown that there is a direct link between how
+# fast models learn and their generalization performance 
+# (Hardt et al., 2015)" taken from Rudford et al. 2016
+
 model = Sequential()
 model.add(Lambda(lambda x: (x / 255.0) - 0.5, input_shape=(160,320,3)))
 model.add(Cropping2D(cropping=((75,25), (0,0))))
@@ -102,21 +122,25 @@ model.add(BatchNormalization())
 model.add(Conv2D(64, (3, 3), strides=(1,2)))
 model.add(Activation('relu'))
 model.add(BatchNormalization())
-model.add(Conv2D(80, (3, 3), strides=(1,2)))
+model.add(Conv2D(48, (3, 3), strides=(1,2)))
+model.add(Activation('relu'))
+model.add(BatchNormalization())
+model.add(Conv2D(32, (1, 1), strides=(1,2)))
 model.add(Activation('relu'))
 model.add(BatchNormalization())
 model.add(Dropout(0.25))
-model.add(Conv2D(64, (1, 1)))
-model.add(Activation('relu'))
-model.add(BatchNormalization())
-model.add(Conv2D(32, (3, 3)))
-model.add(Activation('relu'))
-model.add(BatchNormalization())
-model.add(Conv2D(24, (3, 3)))
-model.add(Activation('relu'))
 model.add(Flatten())
-model.add(Dropout(0.5))
+model.add(Dense(100))
+model.add(Activation('elu'))
+model.add(BatchNormalization())
+model.add(Dense(50))
+model.add(Activation('elu'))
+model.add(BatchNormalization())
 model.add(Dense(10))
+model.add(Activation('elu'))
+model.add(BatchNormalization())
+model.add(Dropout(0.5))
+model.add(Dense(3))
 model.add(Activation('elu'))
 model.add(Dense(1))
 model.add(Activation('linear'))
@@ -138,4 +162,4 @@ print(history_object.history['val_loss'])
 #plt.legend(['training set', 'validation set'], loc='upper right')
 #plt.show()
 #
-model.save('model-d13.h5')
+model.save('model-d12.h5')
