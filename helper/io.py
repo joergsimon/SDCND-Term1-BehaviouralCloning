@@ -10,14 +10,18 @@ def load_img(csv_line, idx):
     return image
 
 def add_image_and_flipped(csv_line, idx, measurment, images, angles):
+    if const.DEBUG:
+        print('add_image_and_flipped', csv_line, idx, measurment)
     image = load_img(csv_line, idx)
     images.append(image)
     angles.append(measurment)
-
+    
     image_flipped = np.fliplr(image)
     measurement_flipped = -measurment
     images.append(image_flipped)
     angles.append(measurement_flipped)
+    if const.DEBUG:
+        print('add_image_and_flipped', image.shape, measurment, image_flipped.shape, measurment, measurement_flipped)
 
 # trans_image is taken almost 1x1 from
 # https://chatbotslife.com/using-augmentation-to-mimic-human-driving-496b569760a9
@@ -41,6 +45,8 @@ def make_trans_image(csv_line, idx, measurment, images, angles):
 
 def process_line(csv_line, images, angles, add_left_right, add_trans):
     source_path = csv_line[const.IDX_CENTER_IMG]
+    if source_path == "center":
+        return
 
     measurement = float(csv_line[const.IDX_STEER_ANGLE])
 
