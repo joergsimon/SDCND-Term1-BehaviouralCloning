@@ -57,12 +57,12 @@ Quite a lot of models were explored. The main reason for that was that for a lon
 
 #### 1. An appropriate model architecture has been employed
 
-In the end a relatively small version of the CNN nvidia used for their BB8 car was used. The winning model can be found in [`models/model5.py`](https://github.com/joergsimon/SDCND-Term1-BehaviouralCloning/blob/master/models/model5.py). It basically has a set of convolutions with strides, one hidden layer at the end with 100 neurons and a dropout of 0.5. Convolutions used RELU, the hidden layer ELU activations. The idea to use a smaller version comes from several sources: A medium blog post from someone else who did the project explored that you can go to a very tiny network to steer the tracks. Additonally simpler models are faster to train and less prone to overfitting. The final model I used had about 88k trainable parameters. This is still not very small but f.e. way smaller than the original architecture who is approx. at 300k parameters, or other architectors like inception and VGG who goes into the millions.
+In the end a relatively small version of the [CNN nvidia used for their BB8 car](https://devblogs.nvidia.com/parallelforall/deep-learning-self-driving-cars/) was used. The winning model can be found in [`models/model5.py`](https://github.com/joergsimon/SDCND-Term1-BehaviouralCloning/blob/master/models/model5.py). It basically has a set of convolutions with strides, one hidden layer at the end with 100 neurons and a dropout of 0.5 [[1](#Srivastava2014)]. Convolutions used RELU, the hidden layer ELU activations. The idea to use a smaller version comes from several sources: A [medium blog post](https://medium.com/@xslittlegrass/self-driving-car-in-a-simulator-with-a-tiny-neural-network-13d33b871234) from someone else who did the project explored that you can go to a very tiny network to steer the tracks. Additonally simpler models are faster to train and less prone to overfitting. The final model I used had about 88k trainable parameters. This is still not very small but f.e. way smaller than the original architecture who is approx. at 300k parameters, or other architectors like inception and VGG who goes into the millions.
 
 
 #### 2. Attempts to reduce overfitting in the model
 
-On the one side the model has a relatively small number of trainable parameters and is not that large. Additonally a Dropout is added one layer befor the final output with a keep probability of 0.5, see [`models/model5.py`](https://github.com/joergsimon/SDCND-Term1-BehaviouralCloning/blob/master/models/model5.py) for details. A lot of testing was done, especially since nothing worked because of internal error for about 3-4 weeks.
+On the one side the model has a relatively small number of trainable parameters and is not that large. Additonally a Dropout [[1](#Srivastava2014)] is added one layer befor the final output with a keep probability of 0.5, see [`models/model5.py`](https://github.com/joergsimon/SDCND-Term1-BehaviouralCloning/blob/master/models/model5.py) for details. A lot of testing was done, especially since nothing worked because of internal error for about 3-4 weeks.
 
 #### 3. Model parameter tuning
 
@@ -78,7 +78,7 @@ Generally data was recorded with center lane driving. Also I drove the car in th
 
 #### 1. Solution Design Approach
 
-The overall strategy for deriving a model architecture was to start with the model from the nvidia paper and then tune it to the different input we have. Since the nvidia model must learn more complex things another idea (inspired by this blog post) was to make the model simpler. I did not go all the path the person in the blog post goes, but at least lowered the amount of trainable parameters from several 100k to about 88k. This network additionally employs a Dropout of 0.5 so the risk of overfitting should be not that high.
+The overall strategy for deriving a model architecture was to start with the model from the [nvidia paper](https://devblogs.nvidia.com/parallelforall/deep-learning-self-driving-cars/) and then tune it to the different input we have. Since the nvidia model must learn more complex things another idea (inspired by this blog post) was to make the model simpler. I did not go all the path the person in the [blog post](https://medium.com/@xslittlegrass/self-driving-car-in-a-simulator-with-a-tiny-neural-network-13d33b871234) goes, but at least lowered the amount of trainable parameters from several 100k to about 88k. This network additionally employs a Dropout of 0.5 [[1](#Srivastava2014)] so the risk of overfitting should be not that high.
 
 Another hint was the progression in training. Earlier more complex models usually started to oscillate between improving and worseing the error on the validation set quite early. This is often seen as a sign of overfitting. The smaller model usually improved in a training for 10 epochs on every step always.
 
@@ -131,8 +131,21 @@ I then recorded the vehicle recovering from the left side and right sides of the
 I also drove the tracks in the other direction. While flipping alread can deal well with the bias towards one direction, I had the feeling that because f.e. of different sight also my driving behaviour was different (especially on track 2), so I guess it was not bad to do that.
 
 From all the recorded data the folloing augmentation was done:
-Beside the center image the both side images were taken withough augmentation, but the target value (steering angle) was corrected using a fixed offset. Additionally (again inspired by a blog post) the center image was randomly shiftet along the x axis and the steering angle was adopted to drive agains that shift. Like mentioned in the post this helped for stronger curves and recovery.
+Beside the center image the both side images were taken withough augmentation, but the target value (steering angle) was corrected using a fixed offset. Additionally (again inspired by a [blog post](https://chatbotslife.com/using-augmentation-to-mimic-human-driving-496b569760a9)) the center image was randomly shiftet along the x axis and the steering angle was adopted to drive agains that shift. Like mentioned in the post this helped for stronger curves and recovery.
 
 All these generated images were then flipped and the angle inverted. This was to counter a bias towards driving into one direction only especially since track 1 would mainly go towards driving left.
 
 The resulting data is fet over a generator to the model. I tried a number of different epoch configurations, but 10 epochs was usually sufficient.
+
+## Conclusion
+
+This project was for a while highly frustrating for me, but teached me an interesting lession: While I knew there is the garbage in, garbage out metapha in ML, I was not aware how subtile it can be that garbage in is produced because of an error in an intermediate sep in your pipeline, and how hard that is to debug. I am currently reflecting a lot how I can change my future strategy on such a project to not loose that much time.
+
+Beside that: Generally it was interesting to see that small models can actually perform better if the environment is simple enough. Also it was interesting to see how you can support mitigating some bias effects like driving in one direction or desired behavior like recovery with data augmentation, that really helped in my case.
+
+## References:
+
+[1]<a name="Srivastava2014"></a> Srivastava et al. 2014, Dropout: a simple way to prevent neural networks from overfitting, The Journal of Machine Learning Research Vol 15 Issue 1
+
+[6]<a name="Szegedy2015"></a> Szegedy et al. 2015, Going Deeper with Convolutions, in ILSVRC 2014 
+
