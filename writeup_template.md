@@ -90,10 +90,10 @@ At the end of the process, the vehicle is able to drive autonomously around the 
 
 The final model architecture ([`models/model5.py`](https://github.com/joergsimon/SDCND-Term1-BehaviouralCloning/blob/master/models/model5.py)) consisted of a convolution neural network with the following layers and layer sizes:
 
-|Layer (type)               | Output Shape            | Param # |
-|===========================|=========================|=========|
-|lambda_1 (Lambda)          |(None, 160, 320, 3)      | 0       |
-|___________________________|_________________________|_________|
+|Layer (type)               | Output Shape            | Param # | 
+|:-------------------------:|:-----------------------:|:-------:| 
+|lambda_1 (Lambda)          |(None, 160, 320, 3)      | 0       | 
+|___________________________|_________________________|_________| 
 | cropping2d_1 (Cropping2D) |(None, 60, 320, 3)       | 0       |
 |___________________________|_________________________|_________|
 |conv2d_1 (Conv2D)          |(None, 19, 106, 16)      | 1216    |
