@@ -13,17 +13,10 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image-center-driving]: ./images/center_2017_05_07_18_08_00_409.jpg
-[image-recovery1]: ./images/center_2017_05_12_14_43_14_831.jpg
-[image-recovery2]: ./images/center_2017_05_12_14_43_16_425.jpg
-[image-recovery3]: ./images/center_2017_05_12_14_43_16_983.jpg
-[image1]: ./examples/placeholder.png "Model Visualization"
-[image2]: ./examples/placeholder.png "Grayscaling"
-[image3]: ./examples/placeholder_small.png "Recovery Image"
-[image4]: ./examples/placeholder_small.png "Recovery Image"
-[image5]: ./examples/placeholder_small.png "Recovery Image"
-[image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/placeholder_small.png "Flipped Image"
+[image-center-driving]: ./blob/master/images/center_2017_05_07_18_08_00_409.jpg "Center driving"
+[image-recovery1]: ./blob/master/images/center_2017_05_12_14_43_14_831.jpg "Recovery start"
+[image-recovery2]: ./blob/master/images/center_2017_05_12_14_43_16_425.jpg "Recovery middle"
+[image-recovery3]: ./blob/master/images/center_2017_05_12_14_43_16_983.jpg "Recovery end"
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
@@ -95,11 +88,47 @@ At the end of the process, the vehicle is able to drive autonomously around the 
 
 #### 2. Final Model Architecture
 
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
+The final model architecture ([`models/model5.py`](https://github.com/joergsimon/SDCND-Term1-BehaviouralCloning/blob/master/models/model5.py)) consisted of a convolution neural network with the following layers and layer sizes:
 
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
-
-![alt text][image1]
+Layer (type)                 Output Shape              Param #   
+=================================================================
+lambda_1 (Lambda)            (None, 160, 320, 3)       0         
+_________________________________________________________________
+cropping2d_1 (Cropping2D)    (None, 60, 320, 3)        0         
+_________________________________________________________________
+conv2d_1 (Conv2D)            (None, 19, 106, 16)       1216      
+_________________________________________________________________
+batch_normalization_1 (Batch (None, 19, 106, 16)       64        
+_________________________________________________________________
+activation_1 (Activation)    (None, 19, 106, 16)       0         
+_________________________________________________________________
+conv2d_2 (Conv2D)            (None, 5, 34, 32)         12832     
+_________________________________________________________________
+batch_normalization_2 (Batch (None, 5, 34, 32)         128       
+_________________________________________________________________
+activation_2 (Activation)    (None, 5, 34, 32)         0         
+_________________________________________________________________
+conv2d_3 (Conv2D)            (None, 1, 15, 32)         25632     
+_________________________________________________________________
+batch_normalization_3 (Batch (None, 1, 15, 32)         128       
+_________________________________________________________________
+activation_3 (Activation)    (None, 1, 15, 32)         0         
+_________________________________________________________________
+flatten_1 (Flatten)          (None, 480)               0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 100)               48100     
+_________________________________________________________________
+batch_normalization_4 (Batch (None, 100)               400       
+_________________________________________________________________
+activation_4 (Activation)    (None, 100)               0         
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 100)               0         
+_________________________________________________________________
+dense_2 (Dense)              (None, 1)                 101       
+=================================================================
+Total params: 88,601
+Trainable params: 88,241
+Non-trainable params: 360
 
 #### 3. Creation of the Training Set & Training Process
 
