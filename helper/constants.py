@@ -1,4 +1,4 @@
-DATA_PATH = './data/'
+DATA_PATH = '/Users/andrea/Public/data_simple/'
 IMG_DATA_PATH = DATA_PATH + 'IMG/'
 IDX_CENTER_IMG = 0
 IDX_LEFT_IMG = 1
@@ -6,6 +6,8 @@ IDX_RIGHT_IMG = 2
 IDX_STEER_ANGLE = 3
 
 BATCH_SIZE = 16
-EPOCHS = 7
+EPOCHS = 10
 
 STEER_CORRECTION_CONSTANT = 0.25
+
+DEBUG = False

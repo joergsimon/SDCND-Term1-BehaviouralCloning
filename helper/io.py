@@ -29,9 +29,7 @@ def trans_image(image,steer,trans_range):
     # Translation
     tr_x = trans_range*np.random.uniform()-trans_range/2
     steer_ang = steer + tr_x/trans_range*2*.2
-    #tr_y = 40*np.random.uniform()-40/2
-    tr_y = 0
-    Trans_M = np.float32([[1,0,tr_x],[0,1,tr_y]])
+    Trans_M = np.float32([[1,0,tr_x],[0,1,0]])
     image_tr = cv2.warpAffine(image,Trans_M,(320,160))
     #print('new image shape', image_tr.shape)
 
@@ -66,7 +64,7 @@ def process_line(csv_line, images, angles, add_left_right, add_trans):
     if add_trans:
         make_trans_image(csv_line, const.IDX_CENTER_IMG, 
                                 measurement, images, angles)
-        make_trans_image(csv_line, const.IDX_LEFT_IMG, 
-                                correct_to_right, images, angles)
-        make_trans_image(csv_line, const.IDX_RIGHT_IMG, 
-                                correct_to_left, images, angles)
+        #make_trans_image(csv_line, const.IDX_LEFT_IMG, 
+        #                        correct_to_right, images, angles)
+        #make_trans_image(csv_line, const.IDX_RIGHT_IMG, 
+        #                        correct_to_left, images, angles)
