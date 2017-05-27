@@ -13,10 +13,10 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image-center-driving]: ./blob/master/images/center_2017_05_07_18_08_00_409.jpg "Center driving"
-[image-recovery1]: ./blob/master/images/center_2017_05_12_14_43_14_831.jpg "Recovery start"
-[image-recovery2]: ./blob/master/images/center_2017_05_12_14_43_16_425.jpg "Recovery middle"
-[image-recovery3]: ./blob/master/images/center_2017_05_12_14_43_16_983.jpg "Recovery end"
+[image-center-driving]: ./images/center_2017_05_07_18_08_00_409.jpg "Center driving"
+[image-recovery1]: ./images/center_2017_05_12_14_43_14_831.jpg "Recovery start"
+[image-recovery2]: ./images/center_2017_05_12_14_43_16_425.jpg "Recovery middle"
+[image-recovery3]: ./images/center_2017_05_12_14_43_16_983.jpg "Recovery end"
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
@@ -125,9 +125,12 @@ _________________________________________________________________
 dropout_1 (Dropout)          (None, 100)               0         
 _________________________________________________________________
 dense_2 (Dense)              (None, 1)                 101       
-=================================================================
+_________________________________________________________________
+
 Total params: 88,601
+
 Trainable params: 88,241
+
 Non-trainable params: 360
 
 #### 3. Creation of the Training Set & Training Process
