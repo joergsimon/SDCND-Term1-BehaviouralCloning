@@ -147,5 +147,3 @@ Beside that: Generally it was interesting to see that small models can actually 
 
 [1]<a name="Srivastava2014"></a> Srivastava et al. 2014, Dropout: a simple way to prevent neural networks from overfitting, The Journal of Machine Learning Research Vol 15 Issue 1
 
-[6]<a name="Szegedy2015"></a> Szegedy et al. 2015, Going Deeper with Convolutions, in ILSVRC 2014 
-
