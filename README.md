@@ -17,13 +17,13 @@ The repo has the following file structure:
 
 ### `model.py`
 
-`model.py` takes a number as a first input. This number should identify the model in the models/ directory, and is then used to train the model. It always saves the result in the folder model-result/ in the form of model-d{modelnumber}-{epoch_checkpoint}.h5 and the last result in the form model-d{modelnumber}.h5
+`model.py` takes a number as a first input. This number should identify the model in the `models/` directory, and is then used to train the model. It always saves the result in the folder `model-result/` in the form of `model-d{modelnumber}-{epoch_checkpoint}.h5` and the last result in the form `model-d{modelnumber}.h5`
 
 F.e.
 ```sh
 model.py 5 
 ```
-will train the models/model5.py model and produce model-result/model-d5-00.py and ongoing models.
+will train the `models/model5.py` model and produce `model-result/model-d5-00.h5` and ongoing models.
 
 ### `drive.py` and `video.py`
 
