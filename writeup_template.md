@@ -1,9 +1,4 @@
-#**Behavioral Cloning** 
-
-##Writeup Template
-
-###You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
+# **Behavioral Cloning** 
 ---
 
 **Behavioral Cloning Project**
@@ -18,6 +13,10 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
+[image-center-driving]: ./images/center_2017_05_07_18_08_00_409.jpg
+[image-recovery1]: ./images/center_2017_05_12_14_43_14_831.jpg
+[image-recovery2]: ./images/center_2017_05_12_14_43_16_425.jpg
+[image-recovery3]: ./images/center_2017_05_12_14_43_16_983.jpg
 [image1]: ./examples/placeholder.png "Model Visualization"
 [image2]: ./examples/placeholder.png "Grayscaling"
 [image3]: ./examples/placeholder_small.png "Recovery Image"
@@ -27,72 +26,74 @@ The goals / steps of this project are the following:
 [image7]: ./examples/placeholder_small.png "Flipped Image"
 
 ## Rubric Points
-###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
+### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
 
 ---
-###Files Submitted & Code Quality
+### Files Submitted & Code Quality
 
-####1. Submission includes all required files and can be used to run the simulator in autonomous mode
+#### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
 My project includes the following files:
-* model.py containing the script to create and train the model
-* drive.py for driving the car in autonomous mode
-* model.h5 containing a trained convolution neural network 
-* writeup_report.md or writeup_report.pdf summarizing the results
+* [model.py](https://github.com/joergsimon/SDCND-Term1-BehaviouralCloning/blob/master/model.py) (script used to create and train the model)
+* [drive.py](https://github.com/joergsimon/SDCND-Term1-BehaviouralCloning/blob/master/drive.py) (script to drive the car - not modified)
+* [model.h5](https://github.com/joergsimon/SDCND-Term1-BehaviouralCloning/blob/master/model.h5) (a trained Keras model)
+* [report.md](https://github.com/joergsimon/SDCND-Term1-BehaviouralCloning/blob/master/report.md) the report writeup file
+* [video.mp4](https://github.com/joergsimon/SDCND-Term1-BehaviouralCloning/blob/master/video.mp4) (a video recording of your vehicle driving autonomously around the track for at least one full lap)
+* [helper](https://github.com/joergsimon/SDCND-Term1-BehaviouralCloning/tree/master/helper) (python module with functionality like generator, io...)
+* [models](https://github.com/joergsimon/SDCND-Term1-BehaviouralCloning/tree/master/models) (collection of the tried out models. In the end model5 was used)
+* [describe_data.py](https://github.com/joergsimon/SDCND-Term1-BehaviouralCloning/blob/master/describe_data.py) (small script do get info about the dat)
 
-####2. Submission includes functional code
+#### 2. Submission includes functional code
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
 ```sh
 python drive.py model.h5
 ```
 
-####3. Submission code is usable and readable
+#### 3. Submission code is usable and readable
 
-The model.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
+The `model.py` file is used to train a specific model. The file however just layouts the general algorithm. Is uses modules in `helper.*` to load the data and transform it inside a generator. It uses `models/model{num}.py` to load specific models and train them.
+```sh
+python model.py 5
+```
 
-###Model Architecture and Training Strategy
+Setting of the data directory is not really clean yet, but there is a module constants.py who have a constant for the directory. So if you need to change that, change it there.
 
-####1. An appropriate model architecture has been employed
+### Model Architecture and Training Strategy
 
-My model consists of a convolution neural network with 3x3 filter sizes and depths between 32 and 128 (model.py lines 18-24) 
+Quite a lot of models were explored. The main reason for that was that for a long time no model worked. So I tried data augmentation, collecting data and a lot of models to fix the project. The frustrating thing was, that it were two internal nasty, easy to avoid errors. I mixed up the index over time of the target colum in the training set. So I trained for throttle to predict steering. Fixing that already made a lof of things better. Another error was that I used the off center images for correction. Unfortunately I had an error in that code too, where I in the end loaded the center image again. So I had 3 images of the same but different steering angles. This of course again lead to a really bad performance.
 
-The model includes RELU layers to introduce nonlinearity (code line 20), and the data is normalized in the model using a Keras lambda layer (code line 18). 
+#### 1. An appropriate model architecture has been employed
 
-####2. Attempts to reduce overfitting in the model
+In the end a relatively small version of the CNN nvidia used for their BB8 car was used. The winning model can be found in [`models/model5.py`](https://github.com/joergsimon/SDCND-Term1-BehaviouralCloning/blob/master/models/model5.py). It basically has a set of convolutions with strides, one hidden layer at the end with 100 neurons and a dropout of 0.5. Convolutions used RELU, the hidden layer ELU activations. The idea to use a smaller version comes from several sources: A medium blog post from someone else who did the project explored that you can go to a very tiny network to steer the tracks. Additonally simpler models are faster to train and less prone to overfitting. The final model I used had about 88k trainable parameters. This is still not very small but f.e. way smaller than the original architecture who is approx. at 300k parameters, or other architectors like inception and VGG who goes into the millions.
 
-The model contains dropout layers in order to reduce overfitting (model.py lines 21). 
 
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+#### 2. Attempts to reduce overfitting in the model
 
-####3. Model parameter tuning
+On the one side the model has a relatively small number of trainable parameters and is not that large. Additonally a Dropout is added one layer befor the final output with a keep probability of 0.5, see [`models/model5.py`](https://github.com/joergsimon/SDCND-Term1-BehaviouralCloning/blob/master/models/model5.py) for details. A lot of testing was done, especially since nothing worked because of internal error for about 3-4 weeks.
 
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 25).
+#### 3. Model parameter tuning
 
-####4. Appropriate training data
+The model used an adam optimizer, so the learning rate was not tuned manually ([`models/model5.py`](https://github.com/joergsimon/SDCND-Term1-BehaviouralCloning/blob/master/models/model5.py) line 31).
 
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road ... 
+#### 4. Appropriate training data
 
-For details about how I created the training data, see the next section. 
+I recorded several datasets with a commulative size of 2.5GB with the simulator. Interestingly the current winnind model used 196MB of center lane driving and data agumentation to archive its result. Still I hope to find a good way to employ the other data in the future.
 
-###Model Architecture and Training Strategy
+Generally data was recorded with center lane driving. Also I drove the car in the opposite direction. I drove it with recovery moves there I tried to just record only the recovery, and I recorded all that also with the second track.
 
-####1. Solution Design Approach
+### Model Architecture and Training Strategy
 
-The overall strategy for deriving a model architecture was to ...
+#### 1. Solution Design Approach
 
-My first step was to use a convolution neural network model similar to the ... I thought this model might be appropriate because ...
+The overall strategy for deriving a model architecture was to start with the model from the nvidia paper and then tune it to the different input we have. Since the nvidia model must learn more complex things another idea (inspired by this blog post) was to make the model simpler. I did not go all the path the person in the blog post goes, but at least lowered the amount of trainable parameters from several 100k to about 88k. This network additionally employs a Dropout of 0.5 so the risk of overfitting should be not that high.
 
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
+Another hint was the progression in training. Earlier more complex models usually started to oscillate between improving and worseing the error on the validation set quite early. This is often seen as a sign of overfitting. The smaller model usually improved in a training for 10 epochs on every step always.
 
-To combat the overfitting, I modified the model so that ...
-
-Then I ... 
-
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
+The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track. to improve the driving behavior in these cases, I just drove these spots again, and added different starting positions near them when starting recording.
 
 At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
 
-####2. Final Model Architecture
+#### 2. Final Model Architecture
 
 The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
 
@@ -100,30 +101,23 @@ Here is a visualization of the architecture (note: visualizing the architecture 
 
 ![alt text][image1]
 
-####3. Creation of the Training Set & Training Process
+#### 3. Creation of the Training Set & Training Process
 
-To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
+To capture good driving behavior, I first recorded several laps on track one using center lane driving. Here is an example image of center lane driving:
 
-![alt text][image2]
+![driving in the center][image-center-driving]
 
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
+I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to always steer back to the middle. I mostly tried to be moderate aggrassive to go back to the middle. These images show what a recovery looks like starting from the right side and then correcting towards the middle:
 
-![alt text][image3]
-![alt text][image4]
-![alt text][image5]
+![start][image-recovery1]
+![middle][image-recovery2]
+![recovered][image-recovery3]
 
-Then I repeated this process on track two in order to get more data points.
+I also drove the tracks in the other direction. While flipping alread can deal well with the bias towards one direction, I had the feeling that because f.e. of different sight also my driving behaviour was different (especially on track 2), so I guess it was not bad to do that.
 
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
+From all the recorded data the folloing augmentation was done:
+Beside the center image the both side images were taken withough augmentation, but the target value (steering angle) was corrected using a fixed offset. Additionally (again inspired by a blog post) the center image was randomly shiftet along the x axis and the steering angle was adopted to drive agains that shift. Like mentioned in the post this helped for stronger curves and recovery.
 
-![alt text][image6]
-![alt text][image7]
+All these generated images were then flipped and the angle inverted. This was to counter a bias towards driving into one direction only especially since track 1 would mainly go towards driving left.
 
-Etc ....
-
-After the collection process, I had X number of data points. I then preprocessed this data by ...
-
-
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
-
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+The resulting data is fet over a generator to the model. I tried a number of different epoch configurations, but 10 epochs was usually sufficient.
